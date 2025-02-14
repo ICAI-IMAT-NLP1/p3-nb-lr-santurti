@@ -43,7 +43,15 @@ def build_vocab(examples: List[SentimentExample]) -> Dict[str, int]:
         Dict[str, int]: A dictionary representing the vocabulary, where each word is mapped to a unique index.
     """
     # TODO: Count unique words in all the examples from the training set
-    vocab: Dict[str, int] = None
+    vocab: Dict[str, int] = {}
+    indx = 0
+
+    # Recorrer la lista de clases y asignar un índice único a cada clase
+    for item in examples:
+        for word in item.words:
+            if word not in vocab:
+                vocab[word] = indx
+                indx += 1
 
     return vocab
 
@@ -64,6 +72,17 @@ def bag_of_words(
         torch.Tensor: A tensor representing the bag-of-words vector.
     """
     # TODO: Converts list of words into BoW, take into account the binary vs full
-    bow: torch.Tensor = None
+
+    # Crear un tensor para almacenar los conteos, inicializado en ceros
+    bow: torch.Tensor = torch.zeros(len(vocab), dtype=torch.int32)
+
+    # Realizar el conteo utilizando PyTorch
+    for palabra in text:
+        if palabra in vocab:
+            indice = vocab[palabra]
+            if binary:
+                bow[indice] = 1
+            else:
+                bow[indice] += 1
 
     return bow
